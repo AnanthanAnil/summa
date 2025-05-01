@@ -185,3 +185,20 @@ C -->|Lint/Test| D[Deployment]
 - **Critical Ops Logged** 📝 (Auth events 💻, Transactions 💰, Predictions 🤖)
 - **Centralized Logging** 🌐 (ELK Stack/CloudWatch)
 - **7-Year Retention** 📅 (GDPR compliant)
+
+# 3. Architecture Overview 🏗️
+
+## 3.1 System Context 🔌
+```mermaid
+graph TD
+    A[User's Browser 🌐] -->|HTTPS| B[Django Application 🐍]
+    B --> C[accounts app 🔐]
+    B --> D[bank app 💰]
+    B --> E[tools app 🧮]
+    B --> F[ml_model app 🤖]
+    C --> G[MySQL Database 🗄️]
+    D --> G
+    E --> G
+    F --> G
+```
+
