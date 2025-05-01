@@ -258,3 +258,92 @@ sequenceDiagram
     AuthModule-->>DjangoView: user_object
     DjangoView-->>User: HTTP 201 Created
 ```
+### 4.2 User Login
+```mermaid
+sequenceDiagram
+    participant User
+    participant DjangoView
+    participant AuthModule
+    participant MySQL
+
+    User->>DjangoView: POST /login {email, password}
+    DjangoView->>AuthModule: authenticate()
+    AuthModule->>MySQL: SELECT * FROM auth_user
+    MySQL-->>AuthModule: user_data
+    AuthModule->>AuthModule: verify_password()
+    AuthModule-->>DjangoView: user_object
+    DjangoView->>DjangoView: create_session()
+    DjangoView-->>User: HTTP 200 + session_id
+```
+### 4.3 Deposit Funds
+```mermaid
+sequenceDiagram
+    participant User
+    participant DjangoView
+    participant BankModule
+    participant MySQL
+
+    User->>DjangoView: POST /deposit {amount:100}
+    DjangoView->>BankModule: validate_amount()
+    BankModule->>MySQL: UPDATE account SET balance += amount
+    MySQL-->>BankModule: new_balance
+    BankModule->>MySQL: INSERT INTO transactions
+    MySQL-->>BankModule: transaction_id
+    BankModule-->>DjangoView: success
+    DjangoView-->>User: {"balance": 100.00}
+```
+
+### 4.4 Withdraw Funds
+```mermaid
+sequenceDiagram
+    participant User
+    participant DjangoView
+    participant BankModule
+    participant MySQL
+
+    User->>DjangoView: POST /withdraw {amount:50}
+    DjangoView->>BankModule: check_balance()
+    BankModule->>MySQL: SELECT balance FROM account
+    MySQL-->>BankModule: current_balance
+    alt Sufficient funds
+        BankModule->>MySQL: UPDATE account SET balance -= amount
+        BankModule->>MySQL: INSERT transaction
+        DjangoView-->>User: {"balance": 50.00}
+    else Insufficient funds
+        DjangoView-->>User: HTTP 400 Error
+    end
+```
+
+### 4.5 EMI Calculator
+```mermaid
+sequenceDiagram
+    participant User
+    participant DjangoView
+    participant FinanceTools
+    participant CalcModule
+
+    User->>DjangoView: GET /tools/emi?P=100000&r=7.5&n=12
+    DjangoView->>FinanceTools: parse_parameters()
+    FinanceTools->>CalcModule: calculate_emi()
+    CalcModule-->>FinanceTools: 8709.22
+    FinanceTools-->>DjangoView: result
+    DjangoView-->>User: {"result": 8709.22}
+```
+
+### 4.6 Loan Amount Prediction
+```mermaid
+sequenceDiagram
+    participant User
+    participant DjangoView
+    participant MLModule
+    participant MLModel
+
+    User->>DjangoView: POST /predict-loan {profile}
+    DjangoView->>MLModule: validate_input()
+    MLModule->>MLModel: load_model()
+    MLModel-->>MLModule: model_ready
+    MLModule->>MLModel: predict(profile)
+    MLModel-->>MLModule: 250000
+    MLModule-->>DjangoView: prediction
+    DjangoView-->>User: {"predicted_amount": 250000}
+```
