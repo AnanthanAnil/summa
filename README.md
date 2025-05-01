@@ -1,6 +1,6 @@
 # Online Banking System with Integrated Financial Tools  
 **Software Design Document (SDD)**  
-*Version 1.0 | Last Updated: [Date]*  
+*Version 1.0 | Last Updated: 2nd MAY  
 
 ---
 
@@ -54,3 +54,9 @@ Web-based platform combining:
   - `POST /api/register/` {name, email, password}
   - `POST /api/login/` {email, password}
   - `POST /api/logout/`
+```
+**Account Management**
+
+GET /api/account/balance/ → {balance: float}
+POST /api/account/deposit/ {amount} → New balance
+POST /api/account/withdraw/ {amount} → New balance
