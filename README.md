@@ -1,3 +1,40 @@
+```mermaid
+graph TD
+    Banking[Banking: Core Transactions<br/>Deposits, Withdrawals, Balance]
+    Planning[Planning: Financial Tools<br/>Calculators, Budgeting, Projections]
+    AI[AI: ML Models<br/>Loan Prediction, Fraud Detection, Personalization]
+
+    FM[Financial Management]
+    IF[Intelligent Fraud Detection]
+    PR[Personalized Recommendations]
+    SFH[Smart Financial Hub]
+
+    Banking --> FM
+    Planning --> FM
+
+    Banking --> IF
+    AI --> IF
+
+    Planning --> PR
+    AI --> PR
+
+    FM --> SFH
+    IF --> SFH
+    PR --> SFH
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Online Banking System with Integrated Financial Tools  
 **Software Design Document (SDD)**  
 *Version 1.0 | Last Updated: 2nd MAY  
