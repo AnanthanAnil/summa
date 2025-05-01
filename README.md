@@ -1,30 +1,3 @@
-```mermaid
-venn
-    title Banking + Planning + AI
-    Banking: Core Transactions: Deposits, Withdrawals, Balance
-    Planning: Financial Tools: Calculators, Budgeting, Projections
-    AI: ML Models: Loan Prediction, Fraud Detection, Personalization
-
-    Banking && Planning: Financial Management
-    Banking && AI: Intelligent Fraud Detection
-    Planning && AI: Personalized Recommendations
-    Banking && Planning && AI: Smart Financial Hub
-
-    style Banking fill:#e6f3ff,stroke:#0066cc
-    style Planning fill:#e6ffe6,stroke:#009900
-    style AI fill:#ffe6e6,stroke:#cc0000
-```
-
-
-
-
-
-
-
-
-
-
-
 
 
 # Online Banking System with Integrated Financial Tools  
