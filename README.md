@@ -110,11 +110,42 @@ GET /api/tools/fd/?P={principal}&r={rate}&t={years}
 ```
 
 **Validation Rules**:
-
-Non-negative numeric inputs
-Rate parameters 0-100%
-JSON response format
+- Non-negative numeric inputs
+- Rate parameters 0-100%
+- SON response format
 
 **Acceptance Criteria**:
-<50ms response time per calculation
-Input validation errors with 400 status
+- <50ms response time per calculation
+- Input validation errors with 400 status
+
+### 2.5 Loan Estimation Service
+
+Endpoint:
+```
+http
+POST /api/predict-loan/
+{
+  "age": int,
+  "monthly_income": float,
+  "credit_score": int,
+  "loan_tenure_years": int,
+  "existing_loan": float,
+  "dependents": int
+}
+```
+
+### 2.6 Testing & Quality Assurance
+**Testing Strategy**:
+
+**Unit Tests**:
+- ≥2 tests per calculator function
+- Banking operation edge cases
+- Authentication failure scenarios
+
+**Integration Tests**:
+- End-to-end user flows
+- Cross-component interactions
+
+**Coverage**:
+- ≥80% code coverage
+- CI pipeline enforcement
