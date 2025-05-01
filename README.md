@@ -75,8 +75,6 @@ Web-based platform combining:
 - Clear error messages for duplicate emails
 - Proper session handling for authenticated users
 
----
-
 ### 2.3 Bank Account Management
 **Description**: Core banking operations for authenticated users
 
@@ -95,8 +93,6 @@ Web-based platform combining:
 **Acceptance Criteria**:
 - Atomic balance updates
 - Overdraft prevention with errors
-
----
 
 ### 2.4 Personal Finance Calculators
 **Description**: 10 financial planning tools with API endpoints
