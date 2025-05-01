@@ -34,10 +34,10 @@ Web-based platform combining:
 ✅ Financial calculator suite  
 ✅ ML loan estimator endpoint  
 
-**Out of Scope**  
-❌ Funds transfer between users  
-❌ Multi-currency support  
-❌ Mobile-native app  
+**Future Scope**  
+📈 Funds transfer between users  
+📈 Multi-currency support  
+📈 Mobile-native app  
 
 ## 2. Requirements <a name="2-requirements"></a>
 
@@ -152,39 +152,39 @@ C -->|Lint/Test| D[Deployment]
 ### 2.7 Non-Functional Requirements 🔧
 
 ### ⚡ Performance 
-- **Calculator Functions**: < 50 ms/request under load ⏱️ (🚀 Speed-critical operations)
-- **ML Endpoint**: < 100 ms inference time 🧠 (⚡ Real-time predictions)
-- **API Response**: < 200 ms (network excluded) 📡 
+- **Calculator Functions**: < 50 ms/request under load (Speed-critical operations)
+- **ML Endpoint**: < 100 ms inference time (Real-time predictions)
+- **API Response**: < 200 ms (network excluded)
 
 ### 📈 Scalability
-- **Stateless API Servers** behind load balancer 🖥️🔄
-- **Managed Database** with vertical/horizontal scaling 📦 (☁️ Cloud-native ready)
+- **Stateless API Servers** behind load balancer 
+- **Managed Database** with vertical/horizontal scaling (Cloud-native ready)
 
 ### 🔒 Security 
-- **HTTPS Mandatory** 🔐 (TLS 1.3+ enforced)
-- **Auth**: Django sessions/JWT with CSRF protection 🛡️
-- **Input Sanitization** 🧼 (XSS/SQLi protection)
-- **Data Protection**: PBKDF2 hashing + log masking 🕵️♂️
+- **HTTPS Mandatory**  (TLS 1.3+ enforced)
+- **Auth**: Django sessions/JWT with CSRF protection
+- **Input Sanitization** (XSS/SQLi protection)
+- **Data Protection**: PBKDF2 hashing + log masking 
 
 ### ♿ Usability & Accessibility
-- **Responsive UI** 📱 (Bootstrap 5 grids)
-- **Form Validation** with clear errors ❗🟥
-- **WCAG 2.1** compliance (keyboard nav 🔑 + screen reader support 🎧)
+- **Responsive UI**  (Bootstrap 5 grids)
+- **Form Validation** with clear errors 
+- **WCAG 2.1** compliance (keyboard nav + screen reader support)
 
 ### 🧰 Maintainability
-- **PEP8 Compliance** 🐍 (flake8 enforced)
-- **Modular Architecture** 🧩 (Auth | Banking | Tools | ML apps)
-- **Documentation**: Docstrings + inline comments 📘 (70% coverage)
+- **PEP8 Compliance** (flake8 enforced)
+- **Modular Architecture** (Auth | Banking | Tools | ML apps)
+- **Documentation**: Docstrings + inline comments (70% coverage)
 
 ### 🚨 Reliability & Availability
-- **99.5% Uptime SLA** 📅 (24/7 monitoring)
-- **Auto-Healing**: Health checks + restart policies 💓
-- **Disaster Recovery**: Daily backups 🗄️
+- **99.5% Uptime SLA** (24/7 monitoring)
+- **Auto-Healing**: Health checks + restart policies
+- **Disaster Recovery**: Daily backups
 
 ### 📋 Audit & Logging
-- **Critical Ops Logged** 📝 (Auth events 💻, Transactions 💰, Predictions 🤖)
-- **Centralized Logging** 🌐 (ELK Stack/CloudWatch)
-- **7-Year Retention** 📅 (GDPR compliant)
+- **Critical Ops Logged** (Auth events, Transactions, Predictions)
+- **Centralized Logging** (ELK Stack/CloudWatch)
+- **7-Year Retention** (GDPR compliant)
 
 ## 3. Architecture Overview & Purpose <a name="3-architecture-overview"></a>
 
@@ -203,12 +203,12 @@ graph TD
 ### 3.2 Technology Stack 🛠️
 | Layer                | Technology             | Rationale                          |
 |----------------------|------------------------|------------------------------------|
-| **Language & Framework** | Python 3.9+ & Django 4 | Built-in ORM & Auth 🐍🛡️          |
-| **Database**         | MySQL                  | ACID Compliance 🗄️⚖️             |
-| **Frontend**         | Bootstrap 5            | Responsive UI 📱💻                |
-| **ML Library**       | scikit-learn/XGBoost   | Proven regression models 📈🤖      |
-| **Testing**          | pytest                 | Modern testing framework 🧪✅      |
-| **Version Control**  | Git + GitHub           | Industry standard PR workflow 🔄👥 |
+| **Language & Framework** | Python 3.9+ & Django 4 | Built-in ORM & Auth          |
+| **Database**         | MySQL                  | ACID Compliance            |
+| **Frontend**         | Bootstrap 5            | Responsive UI                 |
+| **ML Library**       | scikit-learn/XGBoost   | Proven regression models     |
+| **Testing**          | pytest                 | Modern testing framework      |
+| **Version Control**  | Git + GitHub           | Industry standard PR workflow |
 
 ---
 
@@ -233,10 +233,10 @@ project_root/
 ```mermaid
 graph LR
     A[🌐 User Browser] -->|HTTPS| B[🖥️ Server VM]
-    B --> C[(🗄️ MySQL)]
-    B --> D[🐍 Django App]
-    B --> E[📁 Static Files]
-    B --> F[🤖 ML Models]
+    B --> C[( MySQL)]
+    B --> D[Django App]
+    B --> E[ Static Files]
+    B --> F[ ML Models]
 ```
 
 ## 4. Data Flow & Sequence Diagrams & Purpose <a name="4-component-design"></a>
@@ -382,27 +382,27 @@ sequenceDiagram
   ```
 
 ### 💻 Data & Application Terms
-- **ORM (Object-Relational Mapping)** : Database-object conversion layer (e.g., Django ORM) ↔️🗄️
-- **CRUD (Create, Read, Update, Delete)** : Fundamental data operations ➕👀✏️🗑️
-- **REST API** : HTTP-based resource management architecture 🌐🔗
-- **JSON** : Lightweight data interchange format {}📤
+- **ORM (Object-Relational Mapping)** : Database-object conversion layer (e.g., Django ORM) 
+- **CRUD (Create, Read, Update, Delete)** : Fundamental data operations
+- **REST API** : HTTP-based resource management architecture
+- **JSON** : Lightweight data interchange format {}
 
 ### 🖥️ Web & Markup Terms
-- **HTML** : Web page structure language 📄🏗️
-- **CSS** : Style presentation system 🎨🖌️
+- **HTML** : Web page structure language
+- **CSS** : Style presentation system 
 
 ### 🔒 Security Terms
-- **CSRF (Cross-Site Request Forgery)** : Unauthorized action execution 🎭⚡
-- **XSS (Cross-Site Scripting)** : Malicious script injection 🦠📜
+- **CSRF (Cross-Site Request Forgery)** : Unauthorized action execution 
+- **XSS (Cross-Site Scripting)** : Malicious script injection 
 
 ### 🚀 DevOps & Testing
-- **CI/CD** : Automated build-test-deploy pipeline 🔄🧪🚚
-- **Unit Test** : Isolated code verification 🧩✅
-- **Code Coverage** : Test completeness metric 📊✅ (≥80% enforced)
+- **CI/CD** : Automated build-test-deploy pipeline 
+- **Unit Test** : Isolated code verification 
+- **Code Coverage** : Test completeness metric (≥80% enforced)
 
 ### 🤖 Machine Learning
-- **ML** : Pattern learning from data 🧠📊
-- **Regression Model** : Continuous value predictor 📈🔮
+- **ML** : Pattern learning from data 
+- **Regression Model** : Continuous value predictor
 
 ## 8.2 References 📖
 
