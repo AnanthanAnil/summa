@@ -347,32 +347,221 @@ sequenceDiagram
     MLModule-->>DjangoView: prediction
     DjangoView-->>User: {"predicted_amount": 250000}
 ```
-## 7. Testing Strategy 
+## 7. Testing Strategy (Local Development, `unittest`-Based)
 
-### 7.1 Overview 🎯
-**Objectives**:
-- Unit Tests for pure Python logic (calculators/helpers)
-- Django Tests for views/URLs/models/permissions
-- Integration Tests for end-to-end flows
-- **Coverage**: ≥80% line coverage enforced
+To maintain code quality and catch regressions early, we’ll use Django’s built-in `unittest` framework for all testing. Tests run against a local SQLite database by default, isolating them from any production data.
 
-## 7.2 Unit Tests for Pure Functions
-**Location**: `tools/tests.py`, `ml_model/tests.py`
+### 7.1 Overview  
+- **Objectives:**  
+  1. **Unit Tests** for pure Python logic (finance calculators, helper functions).  
+  2. **Django Tests** (`django.test.TestCase`) for views, URLs, models, and permissions.  
+  3. **Integration Tests** combining multiple components end-to-end.  
+  4. **Coverage Enforcement**: ≥ 80% line coverage.  
+
+### 7.2 Unit Tests for Pure Functions  
+**Location:** `tools/tests.py`, `ml_model/tests.py`, and any helper modules.  
+**Pattern:** subclass `unittest.TestCase`.
 
 ```python
 # tools/tests.py
 import unittest
-from tools.finance_tools import calculate_emi
+from tools.finance_tools import calculate_emi, calculate_fd, calculate_sip
 
-class FinanceToolsTests(unittest.TestCase):
-    def test_emi_calculation(self):
-        # ₹1L loan @7.5% APR for 1yr
-        result = calculate_emi(100000, 7.5, 12)
-        self.assertAlmostEqual(result, 8709.22, places=2)
-    
-    def test_zero_principal(self):
+class FinanceToolsUnitTests(unittest.TestCase):
+    def test_calculate_emi_standard(self):
+        # Known EMI for P=100000, r=7.5%, n=12
+        emi = calculate_emi(100000, 7.5, 12)
+        self.assertAlmostEqual(emi, 8709.22, places=2)
+
+    def test_calculate_emi_zero_principal(self):
         self.assertEqual(calculate_emi(0, 5, 12), 0.0)
+
+    def test_calculate_sip_edge(self):
+        # Zero monthly investment yields zero
+        self.assertEqual(calculate_sip(0, 8, 12), 0.0)
+
+    def test_calculate_fd_compound(self):
+        fd = calculate_fd(5000, 6, 2)  # P=5000, r=6%, t=2
+        self.assertAlmostEqual(fd, 5618.00, places=2)
 ```
+### 7.3 Django-Specific Tests  
+Use `django.test.TestCase` (which wraps `unittest.TestCase`) and the test **Client** to simulate requests.
+
+#### 7.3.1 Authentication Tests  
+```python
+# accounts/tests.py
+from django.test import TestCase
+from django.urls import reverse
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class AuthTests(TestCase):
+    def setUp(self):
+        self.register_url = reverse('accounts:register')
+        self.login_url = reverse('accounts:login')
+        self.logout_url = reverse('accounts:logout')
+        self.user_data = {
+            'username': 'alice',
+            'email': 'alice@example.com',
+            'password': 'ComplexP@ss123'
+        }
+
+    def test_register_success(self):
+        resp = self.client.post(self.register_url, self.user_data)
+        self.assertEqual(resp.status_code, 201)
+        self.assertTrue(User.objects.filter(email='alice@example.com').exists())
+
+    def test_register_duplicate_email(self):
+        User.objects.create_user(**self.user_data)
+        resp = self.client.post(self.register_url, self.user_data)
+        self.assertEqual(resp.status_code, 400)
+        self.assertIn('error', resp.json())
+
+    def test_login_logout_flow(self):
+        User.objects.create_user(**self.user_data)
+        resp = self.client.post(self.login_url, {
+            'email': 'alice@example.com',
+            'password': 'ComplexP@ss123'
+        })
+        self.assertEqual(resp.status_code, 200)
+        # Check session created
+        self.assertIn('_auth_user_id', self.client.session)
+
+        resp = self.client.post(self.logout_url)
+        self.assertEqual(resp.status_code, 204)
+        self.assertNotIn('_auth_user_id', self.client.session)
+```
+
+#### 7.3.2 Banking Tests  
+```python
+# bank/tests.py
+from django.test import TestCase
+from django.urls import reverse
+from django.contrib.auth import get_user_model
+from bank.models import Account
+
+User = get_user_model()
+
+class BankTests(TestCase):
+    def setUp(self):
+        # Create and log in a user
+        self.user = User.objects.create_user(username='bob', email='bob@example.com', password='Pwd12345')
+        self.client.login(username='bob', password='Pwd12345')
+        # Ensure account exists
+        self.account = Account.objects.create(user=self.user, balance=100.00)
+        self.balance_url = reverse('bank:balance')
+        self.deposit_url = reverse('bank:deposit')
+        self.withdraw_url = reverse('bank:withdraw')
+
+    def test_balance_view(self):
+        resp = self.client.get(self.balance_url)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.json()['balance'], 100.00)
+
+    def test_deposit_success(self):
+        resp = self.client.post(self.deposit_url, {'amount': '50.00'}, content_type='application/json')
+        self.assertEqual(resp.status_code, 200)
+        self.account.refresh_from_db()
+        self.assertEqual(self.account.balance, 150.00)
+
+    def test_withdraw_success(self):
+        resp = self.client.post(self.withdraw_url, {'amount': '40.00'}, content_type='application/json')
+        self.assertEqual(resp.status_code, 200)
+        self.account.refresh_from_db()
+        self.assertEqual(self.account.balance, 60.00)
+
+    def test_withdraw_insufficient(self):
+        resp = self.client.post(self.withdraw_url, {'amount': '150.00'}, content_type='application/json')
+        self.assertEqual(resp.status_code, 400)
+        self.assertIn('error', resp.json())
+        self.account.refresh_from_db()
+        self.assertEqual(self.account.balance, 100.00)
+```
+
+#### 7.3.3 Finance Tools Endpoint Tests  
+```python
+# tools/tests.py (continued)
+from django.urls import reverse
+from django.test import TestCase
+
+class ToolsEndpointTests(TestCase):
+    def setUp(self):
+        self.emi_url = reverse('tools:emi')
+        self.sip_url = reverse('tools:sip')
+
+    def test_emi_endpoint_valid(self):
+        resp = self.client.get(self.emi_url, {'P':'100000','r':'7.5','n':'12'})
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn('result', resp.json())
+
+    def test_emi_endpoint_invalid_param(self):
+        resp = self.client.get(self.emi_url, {'P':'abc','r':'7.5','n':'12'})
+        self.assertEqual(resp.status_code, 400)
+```
+
+### 7.4 Integration Tests  
+Combine registration, banking, and a calculator in one flow.
+
+```python
+# tests/test_end_to_end.py
+from django.test import TestCase
+from django.urls import reverse
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class EndToEndTest(TestCase):
+    def test_full_user_journey(self):
+        # Register
+        reg = self.client.post(reverse('accounts:register'), {
+            'username':'carol','email':'carol@example.com','password':'Secret123'
+        })
+        self.assertEqual(reg.status_code, 201)
+
+        # Login
+        login = self.client.post(reverse('accounts:login'), {
+            'email':'carol@example.com','password':'Secret123'
+        })
+        self.assertEqual(login.status_code, 200)
+
+        # Deposit
+        dep = self.client.post(reverse('bank:deposit'), {'amount':'200'}, content_type='application/json')
+        self.assertEqual(dep.status_code, 200)
+        self.assertEqual(dep.json()['balance'], 200.00)
+
+        # EMI calculator
+        emi = self.client.get(reverse('tools:emi'), {'P':'50000','r':'6','n':'10'})
+        self.assertEqual(emi.status_code, 200)
+        self.assertTrue(isinstance(emi.json()['result'], float))
+```
+
+### 7.5 Running Tests Locally  
+1. **Activate your virtualenv**:  
+   ```bash
+   source /opt/mybank/venv/bin/activate
+   ```  
+2. **Run all tests via Django**:  
+   ```bash
+   python manage.py test
+   ```  
+3. **View Coverage**:  
+   ```bash
+   pip install coverage
+   coverage run --source='.' manage.py test
+   coverage report --fail-under=80
+   coverage html  # open htmlcov/index.html in browser
+   ```
+
+### 7.6 Fixtures & Test Data  
+- **Django Fixtures:** place JSON/YAML in `accounts/fixtures/` and load via:  
+  ```bash
+  python manage.py loaddata accounts/fixtures/users.json
+  ```  
+- **`setUp()` / `tearDown()`** in each `TestCase` ensures a fresh database per test class.
+
+---
+
 
 ## 8. Glossary & References & Purpose <a name="8-glossary--references"></a>
 
