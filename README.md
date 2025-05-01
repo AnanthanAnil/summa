@@ -347,7 +347,7 @@ sequenceDiagram
     MLModule-->>DjangoView: prediction
     DjangoView-->>User: {"predicted_amount": 250000}
 ```
-## 7. Testing Strategy (Local Development, `unittest`-Based)
+## 7. Testing Strategy (Local Development, `unittest`-Based) & Purpose <a name="7-testing-strategy"></a>
 
 To maintain code quality and catch regressions early, we’ll use Django’s built-in `unittest` framework for all testing. Tests run against a local SQLite database by default, isolating them from any production data.
 
@@ -559,8 +559,6 @@ class EndToEndTest(TestCase):
   python manage.py loaddata accounts/fixtures/users.json
   ```  
 - **`setUp()` / `tearDown()`** in each `TestCase` ensures a fresh database per test class.
-
----
 
 
 ## 8. Glossary & References & Purpose <a name="8-glossary--references"></a>
