@@ -2,8 +2,6 @@
 **Software Design Document (SDD)**  
 *Version 1.0 | Last Updated: 2nd MAY  
 
----
-
 ## Table of Contents
 1. [Introduction & Purpose](#1-introduction--purpose)  
 2. [Requirements](#2-requirements)  
@@ -13,8 +11,6 @@
 6. [Deployment & Operations](#6-deployment--operations)  
 7. [Testing Strategy](#7-testing-strategy)  
 8. [Glossary & References](#8-glossary--references)  
-
----
 
 ## 1. Introduction & Purpose <a name="1-introduction--purpose"></a>
 
@@ -42,8 +38,6 @@ Web-based platform combining:
 ❌ Funds transfer between users  
 ❌ Multi-currency support  
 ❌ Mobile-native app  
-
----
 
 ## 2. Requirements <a name="2-requirements"></a>
 
