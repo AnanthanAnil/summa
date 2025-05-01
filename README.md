@@ -149,3 +149,39 @@ A[GitHub] -->|PRs| B[JIRA]
 B --> C[CI Pipeline]
 C -->|Lint/Test| D[Deployment]
 ```
+### 2.7 Non-Functional Requirements 🔧
+
+### ⚡ Performance 
+- **Calculator Functions**: < 50 ms/request under load ⏱️ (🚀 Speed-critical operations)
+- **ML Endpoint**: < 100 ms inference time 🧠 (⚡ Real-time predictions)
+- **API Response**: < 200 ms (network excluded) 📡 
+
+### 📈 Scalability
+- **Stateless API Servers** behind load balancer 🖥️🔄
+- **Managed Database** with vertical/horizontal scaling 📦 (☁️ Cloud-native ready)
+
+### 🔒 Security 
+- **HTTPS Mandatory** 🔐 (TLS 1.3+ enforced)
+- **Auth**: Django sessions/JWT with CSRF protection 🛡️
+- **Input Sanitization** 🧼 (XSS/SQLi protection)
+- **Data Protection**: PBKDF2 hashing + log masking 🕵️♂️
+
+### ♿ Usability & Accessibility
+- **Responsive UI** 📱 (Bootstrap 5 grids)
+- **Form Validation** with clear errors ❗🟥
+- **WCAG 2.1** compliance (keyboard nav 🔑 + screen reader support 🎧)
+
+### 🧰 Maintainability
+- **PEP8 Compliance** 🐍 (flake8 enforced)
+- **Modular Architecture** 🧩 (Auth | Banking | Tools | ML apps)
+- **Documentation**: Docstrings + inline comments 📘 (70% coverage)
+
+### 🚨 Reliability & Availability
+- **99.5% Uptime SLA** 📅 (24/7 monitoring)
+- **Auto-Healing**: Health checks + restart policies 💓
+- **Disaster Recovery**: Daily backups 🗄️
+
+### 📋 Audit & Logging
+- **Critical Ops Logged** 📝 (Auth events 💻, Transactions 💰, Predictions 🤖)
+- **Centralized Logging** 🌐 (ELK Stack/CloudWatch)
+- **7-Year Retention** 📅 (GDPR compliant)
