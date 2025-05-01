@@ -212,49 +212,29 @@ graph TD
 
 ---
 
-### 3.3 Component Breakdown ⚙️
+### 3.3 Folder Structure 📂
 
-### 3.3.1 Authentication Module (`accounts/`) 🔐
-**Responsibilities**:
-- User signup/login/logout 🖋️🔑🚪
-- Password hashing 🔒
-
-**Key Files**:
 ```bash
-accounts/
-├── models.py       # User models
-├── views.py        # Auth handlers
-├── urls.py         # API endpoints
-└── tests.py        # Security tests
+project_root/
+├── manage.py
+├── requirements.txt
+├── README.md
+├── .gitignore
+├── accounts/          # Auth core 🔐
+├── bank/              # Banking ops 💳
+├── tools/             # Calculators 🧮
+├── ml_model/          # AI models 🤖
+├── templates/         # UI components 🎨
+├── static/            # CSS/JS assets 🖌️
+└── tests/             # Testing 
 ```
 
-### 3.3.2 Bank Module (bank/) 💰
-**Responsibilities**:
-- Balance checks 👀
-- Deposit/withdrawal 💸
-- Transaction logging 📝
-**Key Files**:
-```bash
-bank/
-├── models.py       # Account & Transaction models
-├── views.py        # Financial operations
-└── tests.py        # Transaction tests
+### 3.5 Deployment Topology 
+```mermaid
+graph LR
+    A[🌐 User Browser] -->|HTTPS| B[🖥️ Server VM]
+    B --> C[(🗄️ MySQL)]
+    B --> D[🐍 Django App]
+    B --> E[📁 Static Files]
+    B --> F[🤖 ML Models]
 ```
-
-**Key Files**:
-```bash
-tools/
-├── finance_tools.py # All calculator logic
-├── views.py         # API endpoints
-└── tests.py         # Math validation tests
-```
-
-**Key Files**:
-```bash
-ml_model/
-├── train.py        # Model training script
-├── model.pkl       # Serialized model
-└── views.py        # Prediction endpoint
-```
-
-
