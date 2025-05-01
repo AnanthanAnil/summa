@@ -149,3 +149,11 @@ POST /api/predict-loan/
 **Coverage**:
 - ≥80% code coverage
 - CI pipeline enforcement
+
+### 2.6 Project Workflow & Tracking
+**Development Process**:
+
+graph LR
+A[GitHub] -->|PRs| B[JIRA]
+B --> C[CI Pipeline]
+C -->|Lint/Test| D[Deployment]
