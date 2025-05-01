@@ -199,3 +199,62 @@ graph TD
     E --> G[( MySQL Database)]
     F --> G
 ```
+
+### 3.2 Technology Stack 🛠️
+| Layer                | Technology             | Rationale                          |
+|----------------------|------------------------|------------------------------------|
+| **Language & Framework** | Python 3.9+ & Django 4 | Built-in ORM & Auth 🐍🛡️          |
+| **Database**         | MySQL                  | ACID Compliance 🗄️⚖️             |
+| **Frontend**         | Bootstrap 5            | Responsive UI 📱💻                |
+| **ML Library**       | scikit-learn/XGBoost   | Proven regression models 📈🤖      |
+| **Testing**          | pytest                 | Modern testing framework 🧪✅      |
+| **Version Control**  | Git + GitHub           | Industry standard PR workflow 🔄👥 |
+
+---
+
+### 3.3 Component Breakdown ⚙️
+
+### 3.3.1 Authentication Module (`accounts/`) 🔐
+**Responsibilities**:
+- User signup/login/logout 🖋️🔑🚪
+- Password hashing 🔒
+
+**Key Files**:
+```bash
+accounts/
+├── models.py       # User models
+├── views.py        # Auth handlers
+├── urls.py         # API endpoints
+└── tests.py        # Security tests
+```
+
+### 3.3.2 Bank Module (bank/) 💰
+**Responsibilities**:
+- Balance checks 👀
+- Deposit/withdrawal 💸
+- Transaction logging 📝
+**Key Files**:
+```bash
+bank/
+├── models.py       # Account & Transaction models
+├── views.py        # Financial operations
+└── tests.py        # Transaction tests
+```
+
+**Key Files**:
+```bash
+tools/
+├── finance_tools.py # All calculator logic
+├── views.py         # API endpoints
+└── tests.py         # Math validation tests
+```
+
+**Key Files**:
+```bash
+ml_model/
+├── train.py        # Model training script
+├── model.pkl       # Serialized model
+└── views.py        # Prediction endpoint
+```
+
+
