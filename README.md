@@ -382,48 +382,27 @@ sequenceDiagram
   ```
 
 ### 💻 Data & Application Terms
-- **ORM (Object-Relational Mapping)**  
-  Database-object conversion layer (e.g., Django ORM) ↔️🗄️
-
-- **CRUD (Create, Read, Update, Delete)**  
-  Fundamental data operations ➕👀✏️🗑️
-
-- **REST API**  
-  HTTP-based resource management architecture 🌐🔗
-
-- **JSON**  
-  Lightweight data interchange format {}📤
+- **ORM (Object-Relational Mapping)** : Database-object conversion layer (e.g., Django ORM) ↔️🗄️
+- **CRUD (Create, Read, Update, Delete)** : Fundamental data operations ➕👀✏️🗑️
+- **REST API** : HTTP-based resource management architecture 🌐🔗
+- **JSON** : Lightweight data interchange format {}📤
 
 ### 🖥️ Web & Markup Terms
-- **HTML**  
-  Web page structure language 📄🏗️
-
-- **CSS**  
-  Style presentation system 🎨🖌️
+- **HTML** : Web page structure language 📄🏗️
+- **CSS** : Style presentation system 🎨🖌️
 
 ### 🔒 Security Terms
-- **CSRF (Cross-Site Request Forgery)**  
-  Unauthorized action execution 🎭⚡
-
-- **XSS (Cross-Site Scripting)**  
-  Malicious script injection 🦠📜
+- **CSRF (Cross-Site Request Forgery)** : Unauthorized action execution 🎭⚡
+- **XSS (Cross-Site Scripting)** : Malicious script injection 🦠📜
 
 ### 🚀 DevOps & Testing
-- **CI/CD**  
-  Automated build-test-deploy pipeline 🔄🧪🚚
-
-- **Unit Test**  
-  Isolated code verification 🧩✅
-
-- **Code Coverage**  
-  Test completeness metric 📊✅ (≥80% enforced)
+- **CI/CD** : Automated build-test-deploy pipeline 🔄🧪🚚
+- **Unit Test** : Isolated code verification 🧩✅
+- **Code Coverage** : Test completeness metric 📊✅ (≥80% enforced)
 
 ### 🤖 Machine Learning
-- **ML**  
-  Pattern learning from data 🧠📊
-
-- **Regression Model**  
-  Continuous value predictor 📈🔮
+- **ML** : Pattern learning from data 🧠📊
+- **Regression Model** : Continuous value predictor 📈🔮
 
 ## 8.2 References 📖
 
