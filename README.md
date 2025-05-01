@@ -6,7 +6,7 @@
 1. [Introduction & Purpose](#1-introduction--purpose)  
 2. [Requirements](#2-requirements)  
 3. [Architecture Overview](#3-architecture-overview)  
-4. [Component Design](#4-component-design)  
+4. [Data Flow & Sequence Diagrams & Purpose](#4-component-design)  
 5. [Security Considerations](#5-security-considerations)  
 6. [Deployment & Operations](#6-deployment--operations)  
 7. [Testing Strategy](#7-testing-strategy)  
@@ -237,4 +237,24 @@ graph LR
     B --> D[🐍 Django App]
     B --> E[📁 Static Files]
     B --> F[🤖 ML Models]
+```
+
+## 4. Data Flow & Sequence Diagrams & Purpose <a name="4-component-design"></a>
+
+### 4.1 User Registration
+```mermaid
+sequenceDiagram
+    participant User
+    participant DjangoView
+    participant AuthModule
+    participant MySQL
+
+    User->>DjangoView: POST /register {name, email, password}
+    DjangoView->>AuthModule: validate_input()
+    AuthModule-->>DjangoView: validation_result
+    DjangoView->>AuthModule: create_user()
+    AuthModule->>MySQL: INSERT INTO auth_user
+    MySQL-->>AuthModule: user_id
+    AuthModule-->>DjangoView: user_object
+    DjangoView-->>User: HTTP 201 Created
 ```
