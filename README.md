@@ -55,8 +55,66 @@ Web-based platform combining:
   - `POST /api/login/` {email, password}
   - `POST /api/logout/`
 ```
-**Account Management**
 
-GET /api/account/balance/ → {balance: float}
-POST /api/account/deposit/ {amount} → New balance
-POST /api/account/withdraw/ {amount} → New balance
+### 2.2 User Registration & Authentication
+**Description**: Secure user signup/login/logout functionality
+
+**Endpoints**:
+| Method | Endpoint         | Input Parameters        | Responses               |
+|--------|------------------|-------------------------|-------------------------|
+| POST   | /api/register/   | {name, email, password} | 201 Created/400 BadReq  |
+| POST   | /api/login/      | {email, password}       | 200 OK/401 Unauthorized |
+| POST   | /api/logout/     | None                    | 204 No Content          |
+
+**Business Rules**:
+- Password hashing using PBKDF2
+- Unique email validation
+- Session/JWT token management
+
+**Acceptance Criteria**:
+- Clear error messages for duplicate emails
+- Proper session handling for authenticated users
+
+---
+
+### 2.3 Bank Account Management
+**Description**: Core banking operations for authenticated users
+
+**Endpoints**:
+| Method | Endpoint              | Input Parameters | Responses               |
+|--------|-----------------------|------------------|-------------------------|
+| GET    | /api/account/balance/ | None             | {balance: float}        |
+| POST   | /api/account/deposit/ | {amount: float}  | New balance             |
+| POST   | /api/account/withdraw/| {amount: float}  | New balance/400 BadReq  |
+
+**Business Rules**:
+- Positive transaction amounts
+- Withdrawal limit ≤ current balance
+- Transaction logging with timestamps
+
+**Acceptance Criteria**:
+- Atomic balance updates
+- Overdraft prevention with errors
+
+---
+
+### 2.4 Personal Finance Calculators
+**Description**: 10 financial planning tools with API endpoints
+
+**Calculator Endpoints**:
+```http
+GET /api/tools/emi/?P={principal}&r={rate}&n={months}
+GET /api/tools/sip/?m={monthly}&r={rate}&n={months}
+GET /api/tools/fd/?P={principal}&r={rate}&t={years}
+... (8 additional calculators)
+```
+
+**Validation Rules**:
+
+Non-negative numeric inputs
+Rate parameters 0-100%
+JSON response format
+
+**Acceptance Criteria**:
+<50ms response time per calculation
+Input validation errors with 400 status
