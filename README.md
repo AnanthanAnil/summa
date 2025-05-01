@@ -347,3 +347,96 @@ sequenceDiagram
     MLModule-->>DjangoView: prediction
     DjangoView-->>User: {"predicted_amount": 250000}
 ```
+## 9. Glossary & References & Purpose <a name="8-glossary--references"></a>
+
+### 8.1 Glossary of Terms 📚
+
+### 📈 Financial & Investment Terms
+- **EMI (Equated Monthly Installment)**  
+  Fixed monthly loan payment calculated as:  
+  ```math
+  \text{EMI} = P \times \frac{r(1 + r)^n}{(1 + r)^n - 1}
+  ```
+  Where:  
+  `P` = Principal, `r` = Monthly interest rate, `n` = Total months
+
+- **SIP (Systematic Investment Plan)**  
+  Regular mutual fund investments with rupee cost averaging benefits 💹
+
+- **FD (Fixed Deposit)**  
+  Lump-sum investment with compound interest:  
+  ```math
+  \text{Maturity} = P \times (1 + \tfrac{r}{100})^t
+  ```
+
+- **RD (Recurring Deposit)**  
+  Monthly savings with compound growth:  
+  ```math
+  M = P \times \frac{(1 + r)^{n+1} - (1 + r)}{r}
+  ```
+
+- **ROI (Return on Investment)**  
+  Profitability measure:  
+  ```math
+  \text{ROI} = \frac{\text{Gain} - \text{Cost}}{\text{Cost}} \times 100\%
+  ```
+
+### 💻 Data & Application Terms
+- **ORM (Object-Relational Mapping)**  
+  Database-object conversion layer (e.g., Django ORM) ↔️🗄️
+
+- **CRUD (Create, Read, Update, Delete)**  
+  Fundamental data operations ➕👀✏️🗑️
+
+- **REST API**  
+  HTTP-based resource management architecture 🌐🔗
+
+- **JSON**  
+  Lightweight data interchange format {}📤
+
+### 🖥️ Web & Markup Terms
+- **HTML**  
+  Web page structure language 📄🏗️
+
+- **CSS**  
+  Style presentation system 🎨🖌️
+
+### 🔒 Security Terms
+- **CSRF (Cross-Site Request Forgery)**  
+  Unauthorized action execution 🎭⚡
+
+- **XSS (Cross-Site Scripting)**  
+  Malicious script injection 🦠📜
+
+### 🚀 DevOps & Testing
+- **CI/CD**  
+  Automated build-test-deploy pipeline 🔄🧪🚚
+
+- **Unit Test**  
+  Isolated code verification 🧩✅
+
+- **Code Coverage**  
+  Test completeness metric 📊✅ (≥80% enforced)
+
+### 🤖 Machine Learning
+- **ML**  
+  Pattern learning from data 🧠📊
+
+- **Regression Model**  
+  Continuous value predictor 📈🔮
+
+## 8.2 References 📖
+
+### Core Documentation
+- [Django 4.2 Documentation](https://docs.djangoproject.com/en/4.2/) - Auth, ORM, testing
+- [MySQL 8 Reference](https://dev.mysql.com/doc/refman/8.0/en/) - Database setup
+- [Bootstrap 5 Docs](https://getbootstrap.com/docs/5.0/) - UI components
+
+### Development Resources
+- [scikit-learn Guide](https://scikit-learn.org/stable/user_guide.html) - ML models
+- [Python unittest](https://docs.python.org/3/library/unittest.html) - Testing framework
+- [PEP 8 Style Guide](https://peps.python.org/pep-0008/) - Code formatting
+
+### Security
+- [OWASP Cheat Sheets](https://cheatsheetseries.owasp.org/) - Web security best practices
+- [Django Environ](https://github.com/joke2k/django-environ) - Environment management
