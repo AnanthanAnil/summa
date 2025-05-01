@@ -347,6 +347,154 @@ sequenceDiagram
     MLModule-->>DjangoView: prediction
     DjangoView-->>User: {"predicted_amount": 250000}
 ```
+
+## 5. Security Considerations (Detailed)
+
+A robust security posture is essential for any banking application. Below is an expanded breakdown of each security domain, including implementation notes and sample configurations.
+
+### 5.1 Authentication  
+- **Mechanism:** Django’s built-in session framework  
+- **Implementation:**  
+  - Enable `django.contrib.auth` in `INSTALLED_APPS`.  
+  - Use `LOGIN_URL` and `LOGIN_REDIRECT_URL` in `settings.py`.  
+  - Enforce strong passwords via `AUTH_PASSWORD_VALIDATORS`:  
+    ```python
+    AUTH_PASSWORD_VALIDATORS = [
+        {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+        {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator', 'OPTIONS': {'min_length': 8}},
+        {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+        {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    ]
+    ```  
+  - **CSRF Protection:**  
+    - Ensure `django.middleware.csrf.CsrfViewMiddleware` is enabled.  
+    - Decorate any view modifying state with `@csrf_protect` or use `{% csrf_token %}` in templates.
+      
+### 5.2 Authorization  
+- **Requirement:** Only authenticated users can access banking and tools endpoints.  
+- **Implementation:**  
+  - Use `@login_required` on all class- and function-based views:  
+    ```python
+    from django.contrib.auth.decorators import login_required
+
+    @login_required
+    def deposit_view(request):
+        ...
+    ```  
+  - For DRF endpoints, set default permission classes:  
+    ```python
+    REST_FRAMEWORK = {
+        'DEFAULT_PERMISSION_CLASSES': [
+            'rest_framework.permissions.IsAuthenticated',
+        ],
+    }
+    ```  
+  - **Object-Level Checks:**  
+    - Confirm that, e.g., `Account.objects.get(user=request.user)` never leaks another user’s data.  
+
+### 5.3 Input Validation & Sanitization  
+- **Sanitize All Inputs:** Never trust user-supplied data.  
+- **Implementation:**  
+  - **Django Forms / DRF Serializers:**  
+    ```python
+    from django import forms
+
+    class DepositForm(forms.Form):
+        amount = forms.DecimalField(min_value=0.01, max_digits=12, decimal_places=2)
+    ```  
+  - **Manual Validation in Views:**  
+    ```python
+    try:
+        amt = Decimal(request.POST['amount'])
+        if amt <= 0:
+            raise ValueError
+    except (KeyError, InvalidOperation, ValueError):
+        return JsonResponse({'error': 'Invalid amount'}, status=400)
+    ```  
+  - **HTML Escaping:**  
+    - Use Django template auto-escaping to prevent XSS.  
+    - For any rich text inputs, apply a library like `bleach` to whitelist allowed tags. 
+
+### 5.4 Encryption & Data Protection  
+- **Transport Security:**  
+  - **HTTPS Only:**  
+    ```python
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    ```  
+  - **HSTS:**  
+    ```python
+    SECURE_HSTS_SECONDS = 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    ```  
+- **Password Storage:**  
+  - Django’s default PBKDF2-SHA256 hasher.  
+  - Rotate to stronger algorithms (e.g., Argon2) by installing `django-argon2`.  
+- **Secrets Management:**  
+  - Store `SECRET_KEY`, database credentials, and other secrets in environment variables or a `.env` file loaded via `django-environ` or `python-decouple`.  
+
+### 5.5 Threat Mitigation  
+- **Rate Limiting:**  
+  - Use `django-ratelimit` to throttle login attempts:  
+    ```python
+    from ratelimit.decorators import ratelimit
+
+    @ratelimit(key='ip', rate='5/m', block=True)
+    def login_view(request):
+        ...
+    ```  
+- **SQL Injection Prevention:**  
+  - Always use Django ORM (`.filter()`, `.get()`) rather than raw SQL.  
+- **Cross-Site Scripting (XSS):**  
+  - Rely on Django’s auto-escaping in templates.  
+  - Validate or strip any HTML in user-generated content.  
+- **Cross-Site Request Forgery (CSRF):**  
+  - Ensure CSRF middleware is enabled.  
+  - Include `{% csrf_token %}` in all POST forms or AJAX headers.  
+
+---
+
+### 5.6 Logging & Audit  
+- **Critical Events to Log:**  
+  - Successful & failed logins  
+  - Deposit and withdrawal transactions  
+  - Loan prediction requests (with input hash, not raw data)  
+- **Configuration (`settings.py`):**  
+  ```python
+  LOGGING = {
+      'version': 1,
+      'handlers': {
+          'file': {
+              'level': 'INFO',
+              'class': 'logging.handlers.RotatingFileHandler',
+              'filename': '/var/log/mybank/app.log',
+              'maxBytes': 1024*1024*5,
+              'backupCount': 5,
+          },
+      },
+      'loggers': {
+          'django': {'handlers': ['file'], 'level': 'INFO', 'propagate': True},
+          'bank':   {'handlers': ['file'], 'level': 'INFO', 'propagate': False},
+          'tools':  {'handlers': ['file'], 'level': 'INFO', 'propagate': False},
+          'ml_model':{'handlers':['file'], 'level':'INFO','propagate':False},
+      },
+  }
+  ```  
+- **Audit Trails:**  
+  - Store transaction records with timestamps and user IDs.  
+  - Optionally, implement an audit table for sensitive changes (e.g., password resets).  
+
+### 6.7 Compliance & Best Practices  
+- **Data Privacy:** Adhere to local regulations (e.g., GDPR, if applicable) by:  
+  - Providing data export/deletion endpoints.  
+  - Minimizing storage of personally identifiable information (PII).  
+- **Periodic Reviews:**  
+  - Rotate keys & credentials every 90 days.  
+  - Perform vulnerability scans (e.g., with OWASP ZAP).  
+  - Keep dependencies up to date via `pip-audit` or similar tools.  
+
 ## 6. Deployment & Operations (Detailed) & Purpose <a name="6-deployment--operations"></a> 
 
 A reliable deployment and operations plan ensures your application stays up, scales with demand, and can be rolled back in case of issues—even on a simple on-premise setup. Below is a breakdown of each area with example configurations.
