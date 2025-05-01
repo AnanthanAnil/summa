@@ -153,7 +153,9 @@ POST /api/predict-loan/
 ### 2.6 Project Workflow & Tracking
 **Development Process**:
 
+```mermaid
 graph LR
 A[GitHub] -->|PRs| B[JIRA]
 B --> C[CI Pipeline]
 C -->|Lint/Test| D[Deployment]
+```
