@@ -347,6 +347,183 @@ sequenceDiagram
     MLModule-->>DjangoView: prediction
     DjangoView-->>User: {"predicted_amount": 250000}
 ```
+## 6. Deployment & Operations (Detailed) & Purpose <a name="6-deployment--operations"></a> 
+
+A reliable deployment and operations plan ensures your application stays up, scales with demand, and can be rolled back in case of issues—even on a simple on-premise setup. Below is a breakdown of each area with example configurations.
+
+### 6.1 Infrastructure Setup  
+- **Server OS**  
+  - Ubuntu 20.04 LTS (or any modern Linux distro).  
+  - Minimum 2 vCPU, 4 GB RAM, 50 GB disk for small production.  
+- **Dependencies**  
+  - Python 3.9+ (installed via `apt` or `pyenv`).  
+  - MySQL 8 server (configured with a dedicated DB/user for the app).  
+  - Virtualenv (`python3 -m venv /opt/mybank/venv`).  
+
+### 6.2 Application Deployment  
+#### 6.2.1 Virtual Environment & Requirements  
+```bash
+# Create and activate venv
+python3 -m venv /opt/mybank/venv
+source /opt/mybank/venv/bin/activate
+
+# Install dependencies
+pip install --upgrade pip
+pip install -r /opt/mybank/project_root/requirements.txt
+```
+
+#### 6.2.2 Static Files  
+- Use Django’s **WhiteNoise** to serve static assets without Nginx:  
+  ```python
+  # settings.py
+  INSTALLED_APPS += ['whitenoise.runserver_nostatic']
+  MIDDLEWARE = ['whitenoise.middleware.WhiteNoiseMiddleware'] + MIDDLEWARE
+  STATIC_ROOT = BASE_DIR / 'staticfiles'
+  ```
+- Collect static files:  
+  ```bash
+  python manage.py collectstatic --noinput
+  ```
+
+#### 6.2.3 WSGI Server (Gunicorn) + systemd  
+**File:** `/etc/systemd/system/mybank.service`  
+```ini
+[Unit]
+Description=Gunicorn for MyBanking
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/mybank/project_root
+Environment="PATH=/opt/mybank/venv/bin"
+ExecStart=/opt/mybank/venv/bin/gunicorn \
+    --workers 3 \
+    --bind 127.0.0.1:8000 \
+    project_name.wsgi:application
+
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+```
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable mybank
+sudo systemctl start mybank
+```
+
+### 6.3 Database Migrations & Backups  
+- **Migrations**  
+  - As part of deployment, run:  
+    ```bash
+    source /opt/mybank/venv/bin/activate
+    python manage.py migrate --noinput
+    ```
+- **Automated Backups**  
+  - **Cron job** (e.g., `/etc/cron.d/mysql_backup`):  
+    ```cron
+    0 2 * * * root mysqldump -u db_user -p'secure_pass' mybank_db | gzip > /backups/mybank_db_$(date +\%F).sql.gz
+    ```
+  - Retain backups for 14 days and purge older files via another daily cron.
+
+### 6.4 CI/CD Pipeline  
+Use **GitHub Actions** to lint, test, and deploy on `main` merge.
+
+**File:** `.github/workflows/ci-cd.yml`  
+```yaml
+name: CI/CD
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with: python-version: '3.9'
+      - name: Install dependencies
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+      - name: Lint with flake8
+        run: |
+          source venv/bin/activate
+          flake8 .
+      - name: Run tests
+        run: |
+          source venv/bin/activate
+          coverage run manage.py test
+          coverage report --fail-under=80
+
+  deploy:
+    needs: lint-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /opt/mybank/project_root
+            git pull origin main
+            source /opt/mybank/venv/bin/activate
+            pip install -r requirements.txt
+            python manage.py migrate --noinput
+            python manage.py collectstatic --noinput
+            sudo systemctl restart mybank
+```
+
+### 6.5 Monitoring & Alerts  
+- **Health Check Endpoint:**  
+  - Create `/health/` view returning 200 if DB & cache are reachable.  
+- **Cron-Based Uptime Check:**  
+  ```bash
+  # /usr/local/bin/check_health.sh
+  if ! curl -fsS https://your.domain.com/health/; then
+    echo "Health check failed" | mail -s "MyBank Down" ops@example.com
+  fi
+  ```
+  ```cron
+  */5 * * * * root /usr/local/bin/check_health.sh
+  ```
+- **Error Reporting:**  
+  - Integrate **Sentry**:  
+    ```python
+    # settings.py
+    import sentry_sdk
+    from sentry_sdk.integrations.django import DjangoIntegration
+
+    sentry_sdk.init(
+      dsn=os.environ.get('SENTRY_DSN'),
+      integrations=[DjangoIntegration()],
+      traces_sample_rate=0.1,
+      send_default_pii=True
+    )
+    ```
+
+### 6.6 Rollout & Rollback Strategy  
+- **Rollout:**  
+  - Deploy to a staging server first (same steps), run smoke tests, then merge to `main`.  
+- **Rollback:**  
+  - On failure, SSH into the server:  
+    ```bash
+    cd /opt/mybank/project_root
+    git reset --hard HEAD@{1}
+    sudo systemctl restart mybank
+    ```
+  - Optionally restore previous DB backup if migrations were destructive.
+
 ## 7. Testing Strategy (Local Development, `unittest`-Based) & Purpose <a name="7-testing-strategy"></a>
 
 To maintain code quality and catch regressions early, we’ll use Django’s built-in `unittest` framework for all testing. Tests run against a local SQLite database by default, isolating them from any production data.
