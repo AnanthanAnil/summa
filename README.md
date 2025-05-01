@@ -347,7 +347,7 @@ sequenceDiagram
     MLModule-->>DjangoView: prediction
     DjangoView-->>User: {"predicted_amount": 250000}
 ```
-## 9. Glossary & References & Purpose <a name="8-glossary--references"></a>
+## 8. Glossary & References & Purpose <a name="8-glossary--references"></a>
 
 ### 8.1 Glossary of Terms 📚
 
