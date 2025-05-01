@@ -347,6 +347,33 @@ sequenceDiagram
     MLModule-->>DjangoView: prediction
     DjangoView-->>User: {"predicted_amount": 250000}
 ```
+## 7. Testing Strategy 
+
+### 7.1 Overview 🎯
+**Objectives**:
+- Unit Tests for pure Python logic (calculators/helpers)
+- Django Tests for views/URLs/models/permissions
+- Integration Tests for end-to-end flows
+- **Coverage**: ≥80% line coverage enforced
+
+## 7.2 Unit Tests for Pure Functions
+**Location**: `tools/tests.py`, `ml_model/tests.py`
+
+```python
+# tools/tests.py
+import unittest
+from tools.finance_tools import calculate_emi
+
+class FinanceToolsTests(unittest.TestCase):
+    def test_emi_calculation(self):
+        # ₹1L loan @7.5% APR for 1yr
+        result = calculate_emi(100000, 7.5, 12)
+        self.assertAlmostEqual(result, 8709.22, places=2)
+    
+    def test_zero_principal(self):
+        self.assertEqual(calculate_emi(0, 5, 12), 0.0)
+```
+
 ## 8. Glossary & References & Purpose <a name="8-glossary--references"></a>
 
 ### 8.1 Glossary of Terms 📚
