@@ -186,9 +186,9 @@ C -->|Lint/Test| D[Deployment]
 - **Centralized Logging** 🌐 (ELK Stack/CloudWatch)
 - **7-Year Retention** 📅 (GDPR compliant)
 
-# 3. Architecture Overview 
+## 3. Architecture Overview & Purpose <a name="3-architecture-overview"></a>
 
-## 3.1 System Context 
+### 3.1 System Context 
 ```mermaid
 graph TD
     A[🌐 User Browser] -->|HTTPS| B[🐍 Django Application]
