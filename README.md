@@ -1,26 +1,18 @@
 ```mermaid
-graph TD
-    Banking[Banking: Core Transactions<br/>Deposits, Withdrawals, Balance]
-    Planning[Planning: Financial Tools<br/>Calculators, Budgeting, Projections]
-    AI[AI: ML Models<br/>Loan Prediction, Fraud Detection, Personalization]
+venn
+    title Banking + Planning + AI
+    Banking: Core Transactions: Deposits, Withdrawals, Balance
+    Planning: Financial Tools: Calculators, Budgeting, Projections
+    AI: ML Models: Loan Prediction, Fraud Detection, Personalization
 
-    FM[Financial Management]
-    IF[Intelligent Fraud Detection]
-    PR[Personalized Recommendations]
-    SFH[Smart Financial Hub]
+    Banking && Planning: Financial Management
+    Banking && AI: Intelligent Fraud Detection
+    Planning && AI: Personalized Recommendations
+    Banking && Planning && AI: Smart Financial Hub
 
-    Banking --> FM
-    Planning --> FM
-
-    Banking --> IF
-    AI --> IF
-
-    Planning --> PR
-    AI --> PR
-
-    FM --> SFH
-    IF --> SFH
-    PR --> SFH
+    style Banking fill:#e6f3ff,stroke:#0066cc
+    style Planning fill:#e6ffe6,stroke:#009900
+    style AI fill:#ffe6e6,stroke:#cc0000
 ```
 
 
